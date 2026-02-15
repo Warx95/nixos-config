@@ -39,6 +39,23 @@
     options = "--delete-older-than 30d";
   };
   
+  # Environment session variables
+  environment.sessionVariables = {
+    # Force Wayland for some apps (optional)
+    # NIXOS_OZONE_WL = "1";
+    
+    # Fix for some Java apps/games
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+    
+    # NVIDIA Shader Cache
+    "__GL_SHADER_DISK_CACHE" = "1";
+    "__GL_SHADER_DISK_CACHE_SKIP_CLEANUP" = "1";
+    "__GL_SHADER_DISK_CACHE_SIZE" = "100000000000"; # 100GB limit
+    # For modern DXVK/VKD3D (Proton)
+    "DXVK_STATE_CACHE_PATH" = "/mnt/games/.cache/dxvk-state-cache";
+    "__GL_SHADER_DISK_CACHE_PATH" = "/mnt/games/.cache/nvidia_cache";
+  };
+  
   ################################
   # Bootloader: GRUB + UEFI
   ################################
@@ -123,6 +140,7 @@
   # Wayland-friendly settings
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
+  programs.xwayland.enable = true;
 
   ################################
   # NVIDIA (RTX 4080, Wayland)
@@ -201,11 +219,32 @@
     # Browsers
     firefox
     
+    # Messagers
+    telegram-desktop
+    
+    # VPN
+    amnezia-vpn
+    
     # Image viewer
     loupe
     
     # Archive manager
     file-roller
+    
+    # Minecraft Prism Launcher
+    prismlauncher
+    
+    # Gaming tools
+    goverlay
+    mangohud
+    vkbasalt
+    protonup-qt
+    lutris
+    gamescope
+    winetricks
+    protontricks
+    
+    (wineWow64Packages.full.override { wineRelease = "staging"; mingwSupport = true; })
   ];
 
   ################################
@@ -220,7 +259,7 @@
         liberation_ttf
         fira-code
         fira-code-symbols
-        (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
+        jetbrains-mono
     ];
     
     fontconfig = {
@@ -237,6 +276,52 @@
     subpixel.rgba = "rgb";
     };        
   };
+  
+  ################################
+  # Gaming
+  ################################
+
+  # Games Drive
+  fileSystems."/mnt/games" = {
+    device = "/dev/disk/by-uuid/17ef7868-61a9-43d9-aacd-7204ec73e6d9";
+    fsType = "btrfs";
+    options = [
+        "compress=zstd"
+        "noatime"
+        "nofail"  
+    ];
+  };
+
+  # Steam
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    localNetworkGameTransfers.openFirewall = true;
+    gamescopeSession.enable = true;  
+  };
+  
+  # Gamemode
+  programs.gamemode = {
+    enable = true;
+    enableRenice = true;
+    settings = {
+        general = {
+            renice = 10;
+        };
+        gpu = {
+            apply_gpu_optimizations = "accept-responsibility";
+            gpu_device = 0;
+            amd_performance_level = "high";
+        };
+    };
+  };
+  
+  # Increase file descriptor limits for heavy gaming/wine
+  security.pam.loginLimits = [
+    { domain = "*"; item = "nofile"; type = "soft"; value = "524288"; }
+    { domain = "*"; item = "nofile"; type = "hard"; value = "1048576"; }
+  ];
 
   ################################
   # Misc
