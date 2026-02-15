@@ -10,7 +10,7 @@
     let
       system = "x86_64-linux";
     in {
-      nixosConfigurations."cosmic-host" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."coshmar" = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
           ./configuration.nix

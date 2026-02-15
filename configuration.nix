@@ -12,13 +12,28 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
 
-  networking.hostName = "cosmic-host";
+  networking = {
+    hostName = "coshmar";
+    networkmanager.enable = true;
+    firewall.enable = true;
+    # firewall.allowedTCPPorts = [ ... ];  
+  };
 
   time.timeZone = "Europe/Moscow";
 
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "us";
-
+  
+  # Manual updates only
+  system.autoUpgrade.enable = false;
+  
+  # Garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+  
   ################################
   # Bootloader: GRUB + UEFI
   ################################
@@ -37,6 +52,8 @@
     # Put GRUB into the ESP mounted at /boot (what disko set up)
     # This ensures /boot/EFI/BOOT/BOOTX64.EFI is created.
     useOSProber = false;
+    
+    configurationLimit = 10; # Last 10 generations
   };
 
   ################################
@@ -106,12 +123,49 @@
   };
 
   security.sudo.wheelNeedsPassword = true;
-
+  
   ################################
-  # Networking
+  # Programs
   ################################
-
-  networking.networkmanager.enable = true;
+  
+  environment.systemPackages = with pkgs; [
+    git
+    wget
+    curl
+    micro
+    htop
+    btop
+    
+    pciutils # lspci
+    usbutils # lsusb
+    lshw     # hardware info
+    
+    btrfs-progs
+    compsize # btrfs compression stats
+    
+    # Network debugging
+    nmap
+    traceroute
+    
+    # File management
+    tree
+    fd      # Modern find
+    ripgrep # Modern grep
+    
+    # Archive handling
+    unzip
+    p7zip
+  ];
+  
+  ################################
+  # Services
+  ################################
+  
+  services.fwupd.enable = true; # Firmware updates
+  # fwupdmgr get-devices
+  # fwupdmgr refresh
+  # fwupdmgr get-updates
+  # fwupdmgr update
 
   ################################
   # Misc
@@ -119,13 +173,5 @@
 
   services.printing.enable = false;
   
-  ################################
-  # Programs
-  ################################
-  
-  environment.systemPackages = with pkgs; [
-  git
-  ];
-
   system.stateVersion = "25.11";
 }
