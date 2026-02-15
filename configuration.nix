@@ -234,7 +234,13 @@
     file-roller
     
     # Minecraft Prism Launcher
-    prismlauncher
+    (prismlauncher.override {
+        jdks = [
+            temurin-bin-8
+            temurin-bin-17
+            temurin-bin-21
+        ];
+    })
     
     # Gaming tools
     goverlay
@@ -247,11 +253,6 @@
     protontricks
     
     (wineWow64Packages.full.override { wineRelease = "staging"; mingwSupport = true; })
-    
-    # Java for Minecraft
-    jdk8
-    jdk17
-    jdk21
   ];
 
   ################################
