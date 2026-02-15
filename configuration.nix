@@ -247,6 +247,11 @@
     protontricks
     
     (wineWow64Packages.full.override { wineRelease = "staging"; mingwSupport = true; })
+    
+    # Java for Minecraft
+    jdk8
+    jdk17
+    jdk21
   ];
 
   ################################
