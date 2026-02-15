@@ -96,7 +96,10 @@
   services.fstrim.enable = true;
   
   # Better for NVMe drives
-  boot.kernelParams = [ "nvme_core.default_ps_max_latency_us=0" ]; # Disable power saving
+  boot.kernelParams = [ 
+  "nvme_core.default_ps_max_latency_us=0"
+  "nvidia-drm.modeset=1"
+  ]; # Disable power saving
 
   ################################
   # COSMIC Desktop
@@ -148,6 +151,19 @@
   security.sudo.wheelNeedsPassword = true;
   
   ################################
+  # Mouse settings
+  ################################
+  
+  services.libinput = {
+    enable = true;
+    mouse = {
+        accelProfile = "flat";
+        accelSpeed = "0.5";
+        middleEmulation = false;
+    };
+  };
+  
+  ################################
   # Programs
   ################################
   
@@ -184,7 +200,43 @@
     
     # Browsers
     firefox
+    
+    # Image viewer
+    loupe
+    
+    # Archive manager
+    file-roller
   ];
+
+  ################################
+  # Font settings
+  ################################
+
+  fonts = {
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+        noto-fonts
+        noto-fonts-color-emoji
+        liberation_ttf
+        fira-code
+        fira-code-symbols
+        (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
+    ];
+    
+    fontconfig = {
+      defaultFonts = {
+        serif = [ "Noto Serif" ];
+        sansSerif = [ "Noto Sans" ];
+        monospace = [ "FiraCode Nerd Font" ];
+        }; 
+    # Better font rendering
+    enable = true;
+    antialias = true;
+    hinting.enable = true;
+    hinting.style = "slight";
+    subpixel.rgba = "rgb";
+    };        
+  };
 
   ################################
   # Misc
