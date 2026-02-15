@@ -26,6 +26,11 @@
   
   # Manual updates only
   system.autoUpgrade.enable = false;
+  services.fwupd.enable = true; # Firmware updates
+  # fwupdmgr get-devices
+  # fwupdmgr refresh
+  # fwupdmgr get-updates
+  # fwupdmgr update
   
   # Garbage collection
   nix.gc = {
@@ -74,6 +79,24 @@
     memoryPercent = 50;
     priority = 100;
   };
+
+  ################################
+  # Performance
+  ################################
+  
+  # Better for SSDs and general responsiveness
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 180; # Higher for zram (encourages swap to compressed RAM)
+    "vm.watermark_boost_factor" = 0;
+    "vm.watermark_scale_factor" = 125;
+    "vm.page-cluster" = 0; # Reduces swap thrashing on zram
+  };
+  
+  # SSD TRIM for all filesystems
+  services.fstrim.enable = true;
+  
+  # Better for NVMe drives
+  boot.kernelParams = [ "nvme_core.default_ps_max_latency_us=0" ]; # Disable power saving
 
   ################################
   # COSMIC Desktop
@@ -129,6 +152,7 @@
   ################################
   
   environment.systemPackages = with pkgs; [
+    # Basics
     git
     wget
     curl
@@ -136,10 +160,12 @@
     htop
     btop
     
+    # System debugging
     pciutils # lspci
     usbutils # lsusb
     lshw     # hardware info
     
+    # Filesystem
     btrfs-progs
     compsize # btrfs compression stats
     
@@ -155,17 +181,10 @@
     # Archive handling
     unzip
     p7zip
+    
+    # Browsers
+    firefox
   ];
-  
-  ################################
-  # Services
-  ################################
-  
-  services.fwupd.enable = true; # Firmware updates
-  # fwupdmgr get-devices
-  # fwupdmgr refresh
-  # fwupdmgr get-updates
-  # fwupdmgr update
 
   ################################
   # Misc
