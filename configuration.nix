@@ -175,14 +175,14 @@
   # Mouse settings
   ################################
   
-  #services.libinput = {
-  #  enable = true;
-  #  mouse = {
-  #      accelProfile = "flat";
-  #      accelSpeed = "0.3";
-  #      middleEmulation = false;
-  #  };
-  #};
+  services.libinput = {
+    enable = true;
+    mouse = {
+        accelProfile = "flat";
+        accelSpeed = "0.1";
+        middleEmulation = false;
+    };
+  };
   
   ################################
   # Programs
