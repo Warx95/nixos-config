@@ -185,6 +185,11 @@
   # Programs
   ################################
   
+  # VPN
+  programs = {
+    amnezia-vpn.enable = true;
+  };
+  
   environment.systemPackages = with pkgs; [
     # Basics
     git
@@ -221,9 +226,6 @@
     
     # Messagers
     telegram-desktop
-    
-    # VPN
-    amnezia-vpn
     
     # Image viewer
     loupe
