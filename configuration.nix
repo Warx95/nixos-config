@@ -44,6 +44,9 @@
     # Force Wayland for some apps (optional)
     # NIXOS_OZONE_WL = "1";
     
+    # Mangohud
+    MANGOHUD = "1";
+    
     # Fix for some Java apps/games
     _JAVA_AWT_WM_NONREPARENTING = "1";
     
@@ -176,7 +179,7 @@
     enable = true;
     mouse = {
         accelProfile = "flat";
-        accelSpeed = "0.5";
+        accelSpeed = "0.3";
         middleEmulation = false;
     };
   };
@@ -246,6 +249,7 @@
     goverlay
     mangohud
     vkbasalt
+    
     protonup-qt
     lutris
     gamescope
